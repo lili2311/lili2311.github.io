@@ -1,0 +1,322 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Git: Rewriting History - Liliana Kastilio</title>
+  <meta name="author" content="Liliana Kastilio">
+
+  
+  <meta name="description" content="Git: Rewriting History Aug 26th, 2018 7:24 pm Git internals When you run git init in a new or existing directory, Git creates the .git directory, &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://lili2311.github.io/blog/2018/08/26/git-rewriting-history/">
+  <link href="/images/favicon.png" rel="icon">
+  <link href="/stylesheets/styles.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Liliana Kastilio" type="application/atom+xml">
+<!--   <script src="/javascripts/octopress.js" type="text/javascript"></script>
+ -->  
+  
+
+</head>
+
+<body   >
+  <header role="banner" class="header"><div class="header__wrapper">
+<a href="/">
+	<div class="header__title-wrapper">
+		<h1 class="header__title">Liliana</h1>
+	</div>
+
+	<div class="header__title-wrapper">
+		<h1 class="header__title">Kastilio</h1>
+	</div>
+</a>
+	
+	<h2 class="header__subtitle">Coding Tutorials & Blog</h2>
+	
+	<nav role="navigation" class="navigation">  
+<ul class="navigation__list">
+  <li class="navigation__item">
+  	<a class="navigation__link" href="/">Blog</a>
+  </li>
+  <li class="navigation__item">
+  	<a class="navigation__link" href="/blog/archives">Archives</a>
+  </li>
+  <li class="navigation__item">
+  	<a class="navigation__link" href="/blog/about">About</a>
+  </li>
+  <li class="navigation__item navigation__rss" data-subscription="rss">
+  	<a class="navigation__link" href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a>
+  </li>
+</ul>
+</nav>
+</div>
+</header>
+  <div id="main" class="container">
+    <div id="content">
+      <div>
+<article class="article" role="article">
+  
+  <header>
+    
+      <h1 class="article__title">Git: Rewriting History</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2018-08-26T19:24:12+01:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>26</span><span class='date-suffix'>th</span>, <span class='date-year'>2018</span></span> <span class='time'>7:24 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="article__content"><h1>Git internals</h1>
+
+<p>When you run <code>git init</code> in a new or existing directory, Git creates the <code>.git</code> directory, which is where most of the things that Git stores and manipulates are located. This is what you will see in the folder by default:</p>
+
+<ul>
+<li><code>HEAD</code></li>
+<li><code>config*</code></li>
+<li><code>description</code></li>
+<li><code>hooks/</code></li>
+<li><code>info/</code></li>
+<li><code>objects/</code></li>
+<li><code>refs/</code></li>
+</ul>
+
+
+<p>Git uses a simple key-value data store. Git stores all the content as Tree or Blob objects.
+Trees can be thought of as directories and blobs are bits of content. The following object types exist in Git:</p>
+
+<ol>
+<li><code>commit</code></li>
+<li><code>tree</code></li>
+<li><code>blob</code></li>
+<li><code>annotated tag</code></li>
+</ol>
+
+
+<p>In order to understand undoing things in Git let’s take a deeper look into <code>refs</code> and <code>HEAD</code>.</p>
+
+<h1>Refs</h1>
+
+<p>A ref is an indirect way of referencing to a commit. You can think of it as a user-friendly alias for a commit hash. This is Git’s internal mechanism of representing branches and tags. You can also refer to the commits directly using their SHA-1 hash, you can view this information by running git log</p>
+
+<h1>HEAD</h1>
+
+<p>When you create a new branch, git uses the last commit of the current branch as reference for the new branch and all new commits will be applied on top. But how does git know what the latest commit is? Git uses the HEAD file to store this information. The HEAD file is a symbolic reference to the branch you’re currently on. By symbolic reference, we mean that unlike a normal reference, it doesn’t generally contain a SHA-1 value but rather a pointer to another reference.
+When committing new changes, git creates a commit object and sets that parent of this commit to be the SHA-1 value of whatever the reference points to in the HEAD file.</p>
+
+<h1>Turning back time</h1>
+
+<h2>git reset</h2>
+
+<h3>&ldquo;Crap, I forgot to branch!&rdquo;</h3>
+
+<p>When you have accidentally committed changes to master instead of a branch you can use:</p>
+
+<ul>
+<li><code>git reset --soft HEAD^</code></li>
+</ul>
+
+
+<p>All your changes will be unstaged but still there, you can now make a new branch and commit your changes there instead.</p>
+
+<h3>Crap, I want to undo the last 3 commits?</h3>
+
+<ul>
+<li><code>git reset HEAD^3</code></li>
+</ul>
+
+
+<p>All your changes will be unstaged but still there, you can now make a new branch and commit your changes there instead.</p>
+
+<h2>&ldquo;Crap, I deleted or changed a file accidentally?&rdquo;</h2>
+
+<ul>
+<li><code>git reset path/to/filename</code></li>
+</ul>
+
+
+<h2>git checkout</h2>
+
+<h3>&ldquo;I want to undo the changes to a file&rdquo;</h3>
+
+<p>Git will restore the file to latest version on HEAD, this is the exact opposite of git add. This will get the difference in hunks of file and reset them all. The changes in the file will still be preserved tho, but not marked for a commit.</p>
+
+<ul>
+<li><code>git checkout path/to/filename</code></li>
+</ul>
+
+
+<p>This will drop your changes completely and restore the file to the latest version.</p>
+
+<h1>Rewriting History</h1>
+
+<h2>git amend (rewriting history)</h2>
+
+<h3>&ldquo;Oops, didn’t mean to commit just yet!&rdquo;</h3>
+
+<ul>
+<li><code>git commit --amend</code></li>
+</ul>
+
+
+<p>Premature commits happen, sometimes you forgot to add a file to a commit or made a typo in the commit message. Git allows you to amend your previous commit:
+If you want to just amend the commit message running command below will let you edit the last commit message.</p>
+
+<ul>
+<li><code>git commit --amend</code></li>
+</ul>
+
+
+<p>If you want to just add a new file that you forgot to include:</p>
+
+<ol>
+<li><code>git add filename</code></li>
+<li><code>git commit --amend --no-edit</code></li>
+</ol>
+
+
+<p>This will add the missing file to the last commit. If you want to amend the commit message at the same time simply don’t provide the  <code>--no-edit</code> option.</p>
+
+<h2>git revert</h2>
+
+<h3>&ldquo;Ah ha! Found what introduced this bug, now to undo this change.&rdquo;</h3>
+
+<ul>
+<li><code>git revert commit-hash</code></li>
+</ul>
+
+
+<p>Git revert can help you undo a specific commit that may be no longer needed, it doesn’t actually remove the commit from history but instead figures out how to undo the commit by creating a new commit. This is useful for tracking down and fixing bugs by undoing the commit where the bug was introduced. But also because it doesn’t amend history this is a ‘safe’ way to undo things once the changes are published to a shared repo.</p>
+
+<p>If you get the hang of these few commands you are virtually invincible in Git. There is nothing to worry about with mistakes as most things are fixable. However when re-writing history be careful and make sure this is what you want to do.</p>
+
+<p>🔥 If you enjoyed this post then you can keep up to date with my latests blogs posts &amp; courses by following me on <a href="https://twitter.com/lilianakastilio">Twitter</a> and checking out my code school for some <a href="http://cubcats.teachable.com/courses/">hands on guided coding practice.</a></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Liliana Kastilio</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2018-08-26T19:24:12+01:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>26</span><span class='date-suffix'>th</span>, <span class='date-year'>2018</span></span> <span class='time'>7:24 pm</span></time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://lili2311.github.io/blog/2018/08/26/git-rewriting-history/" data-via="" data-counturl="http://lili2311.github.io/blog/2018/08/26/git-rewriting-history/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2018/08/26/npm-install-distater-waiting-to-happen/" title="Previous Post: Security: using open source packages">&laquo; Security: using open source packages</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2018/08/26/git-rewriting-history/">Git: Rewriting History</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2018/08/26/npm-install-distater-waiting-to-happen/">Security: Using Open Source Packages</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2018/08/26/the-secret-to-learning-to-code/">The Secret to Learning to Code</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2017/01/25/frontend-vs-backend/">Frontend vs Backend</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/10/30/stop-wasting-time-logging-into-github-on-command-line-every-time-you-push-just-set-up-ssh-keys/">Stop Wasting Time Logging Into GitHub on Command Line Every Time You Push: Just Set Up SSH Keys</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="footer"><p>
+  Copyright &copy; 2018 -
+  Made with <span class="heart">&#9829;</span> by <a href="http://www.lilianakastilio.co.uk">Liliana Kastilio</a> <span class="credit"> 
+</p>
+
+</footer>
+  
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+<script>
+  (function(d) {
+    var config = {
+      kitId: 'dgi1mac',
+      scriptTimeout: 3000,
+      async: true
+    },
+    h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};s.parentNode.insertBefore(tk,s)
+  })(document);
+</script>
+
+</body>
+</html>

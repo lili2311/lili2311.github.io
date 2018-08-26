@@ -4,7 +4,7 @@
   <title><![CDATA[Liliana Kastilio]]></title>
   <link href="http://lili2311.github.io/atom.xml" rel="self"/>
   <link href="http://lili2311.github.io/"/>
-  <updated>2018-08-26T19:16:42+01:00</updated>
+  <updated>2018-08-26T19:41:41+01:00</updated>
   <id>http://lili2311.github.io/</id>
   <author>
     <name><![CDATA[Liliana Kastilio]]></name>
@@ -12,6 +12,138 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Git: Rewriting History]]></title>
+    <link href="http://lili2311.github.io/blog/2018/08/26/git-rewriting-history/"/>
+    <updated>2018-08-26T19:24:12+01:00</updated>
+    <id>http://lili2311.github.io/blog/2018/08/26/git-rewriting-history</id>
+    <content type="html"><![CDATA[<h1>Git internals</h1>
+
+<p>When you run <code>git init</code> in a new or existing directory, Git creates the <code>.git</code> directory, which is where most of the things that Git stores and manipulates are located. This is what you will see in the folder by default:</p>
+
+<ul>
+<li><code>HEAD</code></li>
+<li><code>config*</code></li>
+<li><code>description</code></li>
+<li><code>hooks/</code></li>
+<li><code>info/</code></li>
+<li><code>objects/</code></li>
+<li><code>refs/</code></li>
+</ul>
+
+
+<p>Git uses a simple key-value data store. Git stores all the content as Tree or Blob objects.
+Trees can be thought of as directories and blobs are bits of content. The following object types exist in Git:</p>
+
+<ol>
+<li><code>commit</code></li>
+<li><code>tree</code></li>
+<li><code>blob</code></li>
+<li><code>annotated tag</code></li>
+</ol>
+
+
+<p>In order to understand undoing things in Git let’s take a deeper look into <code>refs</code> and <code>HEAD</code>.</p>
+
+<h1>Refs</h1>
+
+<p>A ref is an indirect way of referencing to a commit. You can think of it as a user-friendly alias for a commit hash. This is Git’s internal mechanism of representing branches and tags. You can also refer to the commits directly using their SHA-1 hash, you can view this information by running git log</p>
+
+<h1>HEAD</h1>
+
+<p>When you create a new branch, git uses the last commit of the current branch as reference for the new branch and all new commits will be applied on top. But how does git know what the latest commit is? Git uses the HEAD file to store this information. The HEAD file is a symbolic reference to the branch you’re currently on. By symbolic reference, we mean that unlike a normal reference, it doesn’t generally contain a SHA-1 value but rather a pointer to another reference.
+When committing new changes, git creates a commit object and sets that parent of this commit to be the SHA-1 value of whatever the reference points to in the HEAD file.</p>
+
+<h1>Turning back time</h1>
+
+<h2>git reset</h2>
+
+<h3>&ldquo;Crap, I forgot to branch!&rdquo;</h3>
+
+<p>When you have accidentally committed changes to master instead of a branch you can use:</p>
+
+<ul>
+<li><code>git reset --soft HEAD^</code></li>
+</ul>
+
+
+<p>All your changes will be unstaged but still there, you can now make a new branch and commit your changes there instead.</p>
+
+<h3>Crap, I want to undo the last 3 commits?</h3>
+
+<ul>
+<li><code>git reset HEAD^3</code></li>
+</ul>
+
+
+<p>All your changes will be unstaged but still there, you can now make a new branch and commit your changes there instead.</p>
+
+<h2>&ldquo;Crap, I deleted or changed a file accidentally?&rdquo;</h2>
+
+<ul>
+<li><code>git reset path/to/filename</code></li>
+</ul>
+
+
+<h2>git checkout</h2>
+
+<h3>&ldquo;I want to undo the changes to a file&rdquo;</h3>
+
+<p>Git will restore the file to latest version on HEAD, this is the exact opposite of git add. This will get the difference in hunks of file and reset them all. The changes in the file will still be preserved tho, but not marked for a commit.</p>
+
+<ul>
+<li><code>git checkout path/to/filename</code></li>
+</ul>
+
+
+<p>This will drop your changes completely and restore the file to the latest version.</p>
+
+<h1>Rewriting History</h1>
+
+<h2>git amend (rewriting history)</h2>
+
+<h3>&ldquo;Oops, didn’t mean to commit just yet!&rdquo;</h3>
+
+<ul>
+<li><code>git commit --amend</code></li>
+</ul>
+
+
+<p>Premature commits happen, sometimes you forgot to add a file to a commit or made a typo in the commit message. Git allows you to amend your previous commit:
+If you want to just amend the commit message running command below will let you edit the last commit message.</p>
+
+<ul>
+<li><code>git commit --amend</code></li>
+</ul>
+
+
+<p>If you want to just add a new file that you forgot to include:</p>
+
+<ol>
+<li><code>git add filename</code></li>
+<li><code>git commit --amend --no-edit</code></li>
+</ol>
+
+
+<p>This will add the missing file to the last commit. If you want to amend the commit message at the same time simply don’t provide the  <code>--no-edit</code> option.</p>
+
+<h2>git revert</h2>
+
+<h3>&ldquo;Ah ha! Found what introduced this bug, now to undo this change.&rdquo;</h3>
+
+<ul>
+<li><code>git revert commit-hash</code></li>
+</ul>
+
+
+<p>Git revert can help you undo a specific commit that may be no longer needed, it doesn’t actually remove the commit from history but instead figures out how to undo the commit by creating a new commit. This is useful for tracking down and fixing bugs by undoing the commit where the bug was introduced. But also because it doesn’t amend history this is a ‘safe’ way to undo things once the changes are published to a shared repo.</p>
+
+<p>If you get the hang of these few commands you are virtually invincible in Git. There is nothing to worry about with mistakes as most things are fixable. However when re-writing history be careful and make sure this is what you want to do.</p>
+
+<p>🔥 If you enjoyed this post then you can keep up to date with my latests blogs posts &amp; courses by following me on <a href="https://twitter.com/lilianakastilio">Twitter</a> and checking out my code school for some <a href="http://cubcats.teachable.com/courses/">hands on guided coding practice.</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Security: Using Open Source Packages]]></title>
@@ -64,6 +196,8 @@
 <p>Remember that learning is a process. You cannot simply become a web developer by rushing through a course or reading a bunch of articles. Take every opportunity available to you to use the skills you have learned. This process will take time, it is a living thing that will grow and get better. But this is only possible if you actively participate in the process.</p>
 
 <p>Stay curious, don&rsquo;t give up and be patient.</p>
+
+<p>🔥 If you enjoyed this post then you can keep up to date with my latests blogs posts &amp; courses by following me on <a href="https://twitter.com/lilianakastilio">Twitter</a> and checking out my code school for some <a href="http://cubcats.teachable.com/courses/">hands on guided coding practice.</a></p>
 ]]></content>
   </entry>
   
@@ -196,6 +330,8 @@ A simple website is typically a collection of HTML documents with CSS styling ap
 <h2>5. Try it out!</h2>
 
 <p>You can now go back to your project and try pushing some code, you should no longer be prompted for the password and username every time.</p>
+
+<p>🔥 If you enjoyed this post then you can keep up to date with my latests blogs posts &amp; courses by following me on <a href="https://twitter.com/lilianakastilio">Twitter</a> and checking out my code school for some <a href="http://cubcats.teachable.com/courses/">hands on guided coding practice.</a></p>
 ]]></content>
   </entry>
   
@@ -353,6 +489,8 @@ For more complete information use <code>ls –alF</code></p>
 </span></code></pre></td></tr></table></div></figure></p>
 
 <p>And we are done!</p>
+
+<p>🔥 If you enjoyed this post then you can keep up to date with my latests blogs posts &amp; courses by following me on <a href="https://twitter.com/lilianakastilio">Twitter</a> and checking out my code school for some <a href="http://cubcats.teachable.com/courses/">hands on guided coding practice.</a></p>
 ]]></content>
   </entry>
   
@@ -400,6 +538,8 @@ For more complete information use <code>ls –alF</code></p>
 <img src="http://www.lilianakastilio.co.uk/images/2015-12-03-create-a-simple-website-in-css-and-html-and-deploy-to-amazon-s3/user-complete.png" alt="" /></li>
 </ol>
 
+
+<p>🔥 If you enjoyed this post then you can keep up to date with my latests blogs posts &amp; courses by following me on <a href="https://twitter.com/lilianakastilio">Twitter</a> and checking out my code school for some <a href="http://cubcats.teachable.com/courses/">hands on guided coding practice.</a></p>
 ]]></content>
   </entry>
   
@@ -484,6 +624,8 @@ For more complete information use <code>ls –alF</code></p>
 <p><strong>8.</strong> Thats it! Your website is now live and accessible online via this link at any time.</p>
 
 <p>If you would like to learn how to automate this deploy and make it easier for continuous development watch out for the next blog post where I will talk about using <a href="http://gruntjs.com/">Grunt</a>.</p>
+
+<p>🔥 If you enjoyed this post then you can keep up to date with my latests blogs posts &amp; courses by following me on <a href="https://twitter.com/lilianakastilio">Twitter</a> and checking out my code school for some <a href="http://cubcats.teachable.com/courses/">hands on guided coding practice.</a></p>
 ]]></content>
   </entry>
   
@@ -702,6 +844,8 @@ This model describes the content of the space taken by an element. Each box has 
 <li>Align left or center all the text on the page.</li>
 </ol>
 
+
+<p>🔥 If you enjoyed this post then you can keep up to date with my latests blogs posts &amp; courses by following me on <a href="https://twitter.com/lilianakastilio">Twitter</a> and checking out my code school for some <a href="http://cubcats.teachable.com/courses/">hands on guided coding practice.</a></p>
 ]]></content>
   </entry>
   
@@ -881,6 +1025,8 @@ Each browser has default ways of interpreting each element, these can later be �
 <li><a href="http://codepen.io/pen/">Codepen</a></li>
 </ul>
 
+
+<p>🔥 If you enjoyed this post then you can keep up to date with my latests blogs posts &amp; courses by following me on <a href="https://twitter.com/lilianakastilio">Twitter</a> and checking out my code school for some <a href="http://cubcats.teachable.com/courses/">hands on guided coding practice.</a></p>
 ]]></content>
   </entry>
   
@@ -1473,6 +1619,8 @@ If the browser decides that the document is old-school, it’ll render it in qui
 <li><a href="http://http2.github.io/faq/">HTTP2</a></li>
 </ol>
 
+
+<p>🔥 If you enjoyed this post then you can keep up to date with my latests blogs posts &amp; courses by following me on <a href="https://twitter.com/lilianakastilio">Twitter</a> and checking out my code school for some <a href="http://cubcats.teachable.com/courses/">hands on guided coding practice.</a></p>
 ]]></content>
   </entry>
   
@@ -1891,102 +2039,6 @@ Some of thing Cienfuegos had to offer in terms of attractions are:
 9. Immigration Office Building
 10. El Nicho -->
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[HTML5 Canvas Particle System (Pt. 3)]]></title>
-    <link href="http://lili2311.github.io/blog/2014/11/17/HTML5-Canvas-Particle-System-pt3/"/>
-    <updated>2014-11-17T00:00:00+00:00</updated>
-    <id>http://lili2311.github.io/blog/2014/11/17/HTML5-Canvas-Particle-System-pt3</id>
-    <content type="html"><![CDATA[<p>This is a Part 3 of a tutorial post <a href="http://lili2311.github.io/blog/2014/07/22/Canvas-Particles/">HTML5 Canvas Particles System (Pt. 1)</a>. In this tutorial I will cover:</p>
-
-<ol>
-<li>Initialising Canvas (covered in <a href="http://lili2311.github.io/blog/2014/07/22/Canvas-Particles/">Pt. 1</a>)</li>
-<li>Drawing circles in Canvas (covered in <a href="http://lili2311.github.io/blog/2014/11/16/HTML5-Canvas-Particle-System-pt2/">Pt. 2</a>)</li>
-<li>Simple animation for particle movement using <code>SetInterval()</code> (covered in <a href="http://lili2311.github.io/blog/2014/11/16/HTML5-Canvas-Particle-System-pt2/">Pt. 2</a>)</li>
-<li>Improving the code using <code>RequestAnimationFrame()</code></li>
-</ol>
-
-
-<h4>Using RequestAnimationFrame() instead of SetInterval()</h4>
-
-<p>Instead of using <code>SetInterval()</code> we can animate only when we need to using <code>RequestAnimationFrame()</code>. This helps improve performance as we re-draw only when something has changed. We can define to call <code>spawn()</code>, <code>draw()</code> and <code>update()</code> on load, after which we would have to modify the <code>update()</code> method to trigger the <code>RequestAnimationFrame()</code>.</p>
-
-<p>Here is what we are using instead of <code>SetInterval()</code>:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nb">window</span><span class="p">.</span><span class="nx">requestAnimFrame</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">requestAnimationFrame</span> <span class="o">||</span>
-</span><span class='line'>                          <span class="nb">window</span><span class="p">.</span><span class="nx">webkitRequestAnimationFrame</span> <span class="o">||</span>
-</span><span class='line'>                          <span class="nb">window</span><span class="p">.</span><span class="nx">mozRequestAnimationFrame</span> <span class="o">||</span>
-</span><span class='line'>                          <span class="nb">window</span><span class="p">.</span><span class="nx">oRequestAnimationFrame</span> <span class="o">||</span>
-</span><span class='line'>                          <span class="nb">window</span><span class="p">.</span><span class="nx">msRequestAnimationFrame</span> <span class="o">||</span>
-</span><span class='line'>                          <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
-</span><span class='line'>                            <span class="nb">window</span><span class="p">.</span><span class="nx">setTimeout</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span><span class="mi">1</span><span class="nx">e3</span><span class="p">)</span>
-</span><span class='line'>                          <span class="p">};</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And adding an on load function:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// We should create, draw and start updating on load. </span>
-</span><span class='line'><span class="nb">window</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">c</span><span class="p">.</span><span class="nx">width</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">width</span><span class="p">;</span>
-</span><span class='line'>    <span class="nx">c</span><span class="p">.</span><span class="nx">height</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">height</span><span class="p">;</span>
-</span><span class='line'>    <span class="nx">spawn</span><span class="p">();</span>
-</span><span class='line'>    <span class="nx">draw</span><span class="p">();</span>
-</span><span class='line'>    <span class="nx">update</span><span class="p">();</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We can now modify <code>update()</code> to look like this which now:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">update</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">reset</span><span class="p">();</span>
-</span><span class='line'>    <span class="nx">c</span><span class="p">.</span><span class="nx">width</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">innerWidth</span><span class="p">;</span>
-</span><span class='line'>    <span class="nx">c</span><span class="p">.</span><span class="nx">height</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">innerHeight</span><span class="p">;</span>
-</span><span class='line'>    <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">ps</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="nx">ps</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">y</span> <span class="o">+=</span> <span class="mi">1</span> <span class="p">;</span>
-</span><span class='line'>        <span class="nx">ps</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">x</span> <span class="o">+=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">3</span><span class="p">);</span>
-</span><span class='line'>        <span class="c1">//ps[i].r = Math.random()*5;</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>    <span class="nx">draw</span><span class="p">();</span>
-</span><span class='line'>    <span class="nb">window</span><span class="p">.</span><span class="nx">setTimeout</span><span class="p">(</span><span class="nx">requestAnimFrame</span><span class="p">(</span><span class="nx">update</span><span class="p">),</span><span class="mi">1</span><span class="nx">e3</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And that is it!</p>
 ]]></content>
   </entry>
   

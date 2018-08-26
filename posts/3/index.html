@@ -9,7 +9,7 @@
   <meta name="author" content="Liliana Kastilio">
 
   
-  <meta name="description" content="Cienfuegos, Cuba Nov 17th, 2014 12:00 am Getting There We have kicked off our trip in a small city of Cienfuegos, Cuba. We landed in Varadero &hellip;">
+  <meta name="description" content="HTML5 Canvas Particle System (Pt. 3) Nov 17th, 2014 12:00 am This is a Part 3 of a tutorial post HTML5 Canvas Particles System (Pt. 1). In this &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -64,6 +64,124 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="article__title"><a href="/blog/2014/11/17/HTML5-Canvas-Particle-System-pt3/" class="h1">HTML5 Canvas Particle System (Pt. 3)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2014-11-17T00:00:00+00:00'><span class='date'><span class='date-month'>Nov</span> <span class='date-day'>17</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>12:00 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="article__content"><p>This is a Part 3 of a tutorial post <a href="http://lili2311.github.io/blog/2014/07/22/Canvas-Particles/">HTML5 Canvas Particles System (Pt. 1)</a>. In this tutorial I will cover:</p>
+
+<ol>
+<li>Initialising Canvas (covered in <a href="http://lili2311.github.io/blog/2014/07/22/Canvas-Particles/">Pt. 1</a>)</li>
+<li>Drawing circles in Canvas (covered in <a href="http://lili2311.github.io/blog/2014/11/16/HTML5-Canvas-Particle-System-pt2/">Pt. 2</a>)</li>
+<li>Simple animation for particle movement using <code>SetInterval()</code> (covered in <a href="http://lili2311.github.io/blog/2014/11/16/HTML5-Canvas-Particle-System-pt2/">Pt. 2</a>)</li>
+<li>Improving the code using <code>RequestAnimationFrame()</code></li>
+</ol>
+
+
+<h4>Using RequestAnimationFrame() instead of SetInterval()</h4>
+
+<p>Instead of using <code>SetInterval()</code> we can animate only when we need to using <code>RequestAnimationFrame()</code>. This helps improve performance as we re-draw only when something has changed. We can define to call <code>spawn()</code>, <code>draw()</code> and <code>update()</code> on load, after which we would have to modify the <code>update()</code> method to trigger the <code>RequestAnimationFrame()</code>.</p>
+
+<p>Here is what we are using instead of <code>SetInterval()</code>:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nb">window</span><span class="p">.</span><span class="nx">requestAnimFrame</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">requestAnimationFrame</span> <span class="o">||</span>
+</span><span class='line'>                          <span class="nb">window</span><span class="p">.</span><span class="nx">webkitRequestAnimationFrame</span> <span class="o">||</span>
+</span><span class='line'>                          <span class="nb">window</span><span class="p">.</span><span class="nx">mozRequestAnimationFrame</span> <span class="o">||</span>
+</span><span class='line'>                          <span class="nb">window</span><span class="p">.</span><span class="nx">oRequestAnimationFrame</span> <span class="o">||</span>
+</span><span class='line'>                          <span class="nb">window</span><span class="p">.</span><span class="nx">msRequestAnimationFrame</span> <span class="o">||</span>
+</span><span class='line'>                          <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
+</span><span class='line'>                            <span class="nb">window</span><span class="p">.</span><span class="nx">setTimeout</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span><span class="mi">1</span><span class="nx">e3</span><span class="p">)</span>
+</span><span class='line'>                          <span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And adding an on load function:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// We should create, draw and start updating on load. </span>
+</span><span class='line'><span class="nb">window</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">c</span><span class="p">.</span><span class="nx">width</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">width</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">c</span><span class="p">.</span><span class="nx">height</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">height</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">spawn</span><span class="p">();</span>
+</span><span class='line'>    <span class="nx">draw</span><span class="p">();</span>
+</span><span class='line'>    <span class="nx">update</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We can now modify <code>update()</code> to look like this which now:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">update</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">reset</span><span class="p">();</span>
+</span><span class='line'>    <span class="nx">c</span><span class="p">.</span><span class="nx">width</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">innerWidth</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">c</span><span class="p">.</span><span class="nx">height</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">innerHeight</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">ps</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">ps</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">y</span> <span class="o">+=</span> <span class="mi">1</span> <span class="p">;</span>
+</span><span class='line'>        <span class="nx">ps</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">x</span> <span class="o">+=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">3</span><span class="p">);</span>
+</span><span class='line'>        <span class="c1">//ps[i].r = Math.random()*5;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="nx">draw</span><span class="p">();</span>
+</span><span class='line'>    <span class="nb">window</span><span class="p">.</span><span class="nx">setTimeout</span><span class="p">(</span><span class="nx">requestAnimFrame</span><span class="p">(</span><span class="nx">update</span><span class="p">),</span><span class="mi">1</span><span class="nx">e3</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And that is it!</p>
+
+<p>🔥 If you enjoyed this post then you can keep up to date with my latests blogs posts &amp; courses by following me on <a href="https://twitter.com/lilianakastilio">Twitter</a> and checking out my code school for some <a href="http://cubcats.teachable.com/courses/">hands on guided coding practice.</a></p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -543,6 +661,8 @@
 <p>Live demo <a href="http://www.lilianakastilio.co.uk/particles/particles.html">here</a>.</p>
 
 <p>In Pt.3, I will cover how we can improve our animation using <code>RequestAnimationFrame()</code>(Pt.3 can be found <a href="">here</a>).</p>
+
+<p>🔥 If you enjoyed this post then you can keep up to date with my latests blogs posts &amp; courses by following me on <a href="https://twitter.com/lilianakastilio">Twitter</a> and checking out my code school for some <a href="http://cubcats.teachable.com/courses/">hands on guided coding practice.</a></p>
 </div>
   
   
@@ -1061,6 +1181,8 @@ all vaccinations at least 6 weeks before the trip as some of them require multip
 </span><span class='line'><span class="nb">window</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="nx">init</span><span class="p">();</span>
 </span></code></pre></td></tr></table></div></figure>
 
+
+<p>🔥 If you enjoyed this post then you can keep up to date with my latests blogs posts &amp; courses by following me on <a href="https://twitter.com/lilianakastilio">Twitter</a> and checking out my code school for some <a href="http://cubcats.teachable.com/courses/">hands on guided coding practice.</a></p>
 </div>
   
   
@@ -1134,6 +1256,8 @@ all vaccinations at least 6 weeks before the trip as some of them require multip
 
 
 <p>We have now initialized a blank canvas and are ready to draw something. I will cover drawing circles in the <a href="http://lili2311.github.io/blog/2014/11/16/HTML5-Canvas-Particle-System-pt2/">next blog post</a>.</p>
+
+<p>🔥 If you enjoyed this post then you can keep up to date with my latests blogs posts &amp; courses by following me on <a href="https://twitter.com/lilianakastilio">Twitter</a> and checking out my code school for some <a href="http://cubcats.teachable.com/courses/">hands on guided coding practice.</a></p>
 </div>
   
   
@@ -1415,6 +1539,8 @@ After some franctic googling and trying desperately to remember what I have lear
 <li><a href="http://stackoverflow.com/">StackOverflow</a></li>
 </ol>
 
+
+<p>🔥 If you enjoyed this post then you can keep up to date with my latests blogs posts &amp; courses by following me on <a href="https://twitter.com/lilianakastilio">Twitter</a> and checking out my code school for some <a href="http://cubcats.teachable.com/courses/">hands on guided coding practice.</a></p>
 </div>
   
   
@@ -1469,6 +1595,10 @@ The list of the work so far can be found <a href="http://www.lilianakastilio.co.
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2018/08/26/git-rewriting-history/">Git: Rewriting History</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2018/08/26/npm-install-distater-waiting-to-happen/">Security: Using Open Source Packages</a>
       </li>
     
@@ -1482,10 +1612,6 @@ The list of the work so far can be found <a href="http://www.lilianakastilio.co.
     
       <li class="post">
         <a href="/blog/2016/10/30/stop-wasting-time-logging-into-github-on-command-line-every-time-you-push-just-set-up-ssh-keys/">Stop Wasting Time Logging Into GitHub on Command Line Every Time You Push: Just Set Up SSH Keys</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/03/05/frontend-automation-with-grunt/">Frontend Automation With Grunt</a>
       </li>
     
   </ul>

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>http://lili2311.github.io/blog/2018/08/26/git-rewriting-history/</loc>
+<lastmod>2018-08-26T19:24:12+01:00</lastmod>
+</url>
+<url>
 <loc>http://lili2311.github.io/blog/2018/08/26/npm-install-distater-waiting-to-happen/</loc>
 <lastmod>2018-08-26T18:51:22+01:00</lastmod>
 </url>

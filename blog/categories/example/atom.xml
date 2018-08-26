@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Example | Liliana Kastilio]]></title>
   <link href="http://lili2311.github.io/blog/categories/example/atom.xml" rel="self"/>
   <link href="http://lili2311.github.io/"/>
-  <updated>2018-08-26T19:16:42+01:00</updated>
+  <updated>2018-08-26T19:41:41+01:00</updated>
   <id>http://lili2311.github.io/</id>
   <author>
     <name><![CDATA[Liliana Kastilio]]></name>
@@ -613,6 +613,8 @@ If the browser decides that the document is old-school, it’ll render it in qui
 <li><a href="http://http2.github.io/faq/">HTTP2</a></li>
 </ol>
 
+
+<p>🔥 If you enjoyed this post then you can keep up to date with my latests blogs posts &amp; courses by following me on <a href="https://twitter.com/lilianakastilio">Twitter</a> and checking out my code school for some <a href="http://cubcats.teachable.com/courses/">hands on guided coding practice.</a></p>
 ]]></content>
   </entry>
   
@@ -1005,6 +1007,8 @@ Now we have to call this new <code>reset()</code> function on each frame:
 <p>Live demo <a href="http://www.lilianakastilio.co.uk/particles/particles.html">here</a>.</p>
 
 <p>In Pt.3, I will cover how we can improve our animation using <code>RequestAnimationFrame()</code>(Pt.3 can be found <a href="">here</a>).</p>
+
+<p>🔥 If you enjoyed this post then you can keep up to date with my latests blogs posts &amp; courses by following me on <a href="https://twitter.com/lilianakastilio">Twitter</a> and checking out my code school for some <a href="http://cubcats.teachable.com/courses/">hands on guided coding practice.</a></p>
 ]]></content>
   </entry>
   
@@ -1207,6 +1211,8 @@ Now we have to call this new <code>reset()</code> function on each frame:
 </span><span class='line'><span class="p">}</span>
 </span><span class='line'><span class="nb">window</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="nx">init</span><span class="p">();</span>
 </span></code></pre></td></tr></table></div></figure></p>
+
+<p>🔥 If you enjoyed this post then you can keep up to date with my latests blogs posts &amp; courses by following me on <a href="https://twitter.com/lilianakastilio">Twitter</a> and checking out my code school for some <a href="http://cubcats.teachable.com/courses/">hands on guided coding practice.</a></p>
 ]]></content>
   </entry>
   
@@ -1251,6 +1257,8 @@ This creates a blank canvas for us to use. You can set the with and height at th
 </span></code></pre></td></tr></table></div></figure></p>
 
 <p>We have now initialized a blank canvas and are ready to draw something. I will cover drawing circles in the <a href="http://lili2311.github.io/blog/2014/11/16/HTML5-Canvas-Particle-System-pt2/">next blog post</a>.</p>
+
+<p>🔥 If you enjoyed this post then you can keep up to date with my latests blogs posts &amp; courses by following me on <a href="https://twitter.com/lilianakastilio">Twitter</a> and checking out my code school for some <a href="http://cubcats.teachable.com/courses/">hands on guided coding practice.</a></p>
 ]]></content>
   </entry>
   
@@ -1491,6 +1499,8 @@ After some franctic googling and trying desperately to remember what I have lear
 <li><a href="http://stackoverflow.com/">StackOverflow</a></li>
 </ol>
 
+
+<p>🔥 If you enjoyed this post then you can keep up to date with my latests blogs posts &amp; courses by following me on <a href="https://twitter.com/lilianakastilio">Twitter</a> and checking out my code school for some <a href="http://cubcats.teachable.com/courses/">hands on guided coding practice.</a></p>
 ]]></content>
   </entry>
   
